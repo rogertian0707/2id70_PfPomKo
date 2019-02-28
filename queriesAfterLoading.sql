@@ -13,4 +13,4 @@ WHERE 	courseoffers_one.CourseId = courses.CourseId
 		AND teacherAssignmentsToCourses.CourseOfferId  = courseoffers_one.CourseOfferId;
 
 SELECT courseoffers.courseofferid, courseoffers.courseid, courseoffers.year, courseoffers.quartile, courses.coursename, courses.coursedescription, degrees.degreeid, courses.ects, degrees.dept, degrees.degreedescription, degrees.totalects, teachers.teacherid, teachers.teachername, teachers.address, teachers.birthyearteacher, teachers.gender FROM courseoffers, courses, degrees, teachers, studentassistants, teacherassignmentstocourses WHERE studentassistants.studentregistrationid=140 AND studentassistants.courseofferid=courseoffers.courseofferid AND courseoffers.courseid=courses.courseid AND courses.degreeid=degrees.degreeid AND teacherassignmentstocourses.courseofferid=courseoffers.courseofferid AND teacherassignmentstocourses.teacherid=teachers.teacherid ;
-SELECT AVG(Grade) FROM CourseRegistrations WHERE studentregistrationid=140;
+SELECT AVG(Grade) FROM CourseRegistrations WHERE studentregistrationid=3;
