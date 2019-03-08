@@ -2,6 +2,7 @@
 #
 # create db
 # createdb uni
+START=$(date +%s)
 psql -U postgres -c "CREATE DATABASE uni;"
 #
 #
@@ -77,3 +78,6 @@ psql -U postgres -d uni -c "ALTER TABLE courseregistrations_passed ADD PRIMARY K
 # psql -U postgres -d uni -c "ALTER TABLE teachers ALTER COLUMN birthyearteacher TYPE smallint USING birthyearteacher::smallint ;"
 # psql -U postgres -d uni -c "ALTER TABLE teachers ALTER COLUMN gender TYPE char(1) USING gender::char(1) ;"
 #
+END=$(date +%s)
+DIFF=$(echo "$END - $START" | bc)
+echo "It takes DIFF=$DIFF seconds to complete this task..."
