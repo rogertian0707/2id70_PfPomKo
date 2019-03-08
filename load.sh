@@ -31,18 +31,15 @@ psql -U postgres -d uni -c "ANALYZE;"
 #
 #
 # loading CourseRegistrations to small tables
-psql -U postgres -d uni -c "CREATE UNLOGGED TABLE CourseRegistrations_0 AS SELECT * FROM CourseRegistrations WHERE NOT (CourseRegistrations.grade IS NOT NULL);"
-psql -U postgres -d uni -c "CREATE UNLOGGED TABLE CourseRegistrations_garbage AS SELECT * FROM CourseRegistrations WHERE grade < 4;"
-# psql -U postgres -d uni -c "CREATE TABLE CourseRegistrations_2 AS SELECT * FROM CourseRegistrations WHERE grade = 2;"
-# psql -U postgres -d uni -c "CREATE TABLE CourseRegistrations_3 AS SELECT * FROM CourseRegistrations WHERE grade = 3;"
-psql -U postgres -d uni -c "CREATE UNLOGGED TABLE CourseRegistrations_4 AS SELECT * FROM CourseRegistrations WHERE grade = 4;"
-psql -U postgres -d uni -c "CREATE UNLOGGED TABLE CourseRegistrations_5 AS SELECT * FROM CourseRegistrations WHERE grade = 5;"
-psql -U postgres -d uni -c "CREATE UNLOGGED TABLE CourseRegistrations_6 AS SELECT * FROM CourseRegistrations WHERE grade = 6;"
-psql -U postgres -d uni -c "CREATE UNLOGGED TABLE CourseRegistrations_7 AS SELECT * FROM CourseRegistrations WHERE grade = 7;"
-psql -U postgres -d uni -c "CREATE UNLOGGED TABLE CourseRegistrations_8 AS SELECT * FROM CourseRegistrations WHERE grade = 8;"
-psql -U postgres -d uni -c "CREATE UNLOGGED TABLE CourseRegistrations_9 AS SELECT * FROM CourseRegistrations WHERE grade = 9;"
-psql -U postgres -d uni -c "CREATE UNLOGGED TABLE CourseRegistrations_10 AS SELECT * FROM CourseRegistrations WHERE grade = 10;"
+psql -U postgres -d uni -c "CREATE UNLOGGED TABLE CourseRegistrations_NULL AS SELECT * FROM CourseRegistrations WHERE NOT (CourseRegistrations.grade IS NOT NULL) ORDER BY studentregistrationid;"
+psql -U postgres -d uni -c "CREATE UNLOGGED TABLE CourseRegistrations_failed AS SELECT * FROM CourseRegistrations WHERE grade < 4 ORDER BY studentregistrationid;"
+psql -U postgres -d uni -c "CREATE UNLOGGED TABLE CourseRegistrations_4 AS SELECT * FROM CourseRegistrations WHERE grade = 4 ORDER BY studentregistrationid;"
+psql -U postgres -d uni -c "CREATE UNLOGGED TABLE CourseRegistrations_passed AS SELECT * FROM CourseRegistrations WHERE grade >4 ORDER BY studentregistrationid;"
 psql -U postgres -d uni -c "DROP TABLE CourseRegistrations;"
+psql -U postgres -d uni -c "ALTER TABLE courseregistrations_4 ADD PRIMARY KEY (studentregistrationid,courseofferid);"
+psql -U postgres -d uni -c "ALTER TABLE courseregistrations_null ADD PRIMARY KEY (studentregistrationid,courseofferid);"
+psql -U postgres -d uni -c "ALTER TABLE courseregistrations_failed ADD PRIMARY KEY (studentregistrationid,courseofferid);"
+psql -U postgres -d uni -c "ALTER TABLE courseregistrations_passed ADD PRIMARY KEY (studentregistrationid,courseofferid);"
 #
 #OPTIMIZATION
 # DO NOT SET FK, slow down performance
@@ -79,3 +76,4 @@ psql -U postgres -d uni -c "DROP TABLE CourseRegistrations;"
 # psql -U postgres -d uni -c "ALTER TABLE teachers ALTER COLUMN address TYPE varchar(200) USING address::varchar(200) ;"
 # psql -U postgres -d uni -c "ALTER TABLE teachers ALTER COLUMN birthyearteacher TYPE smallint USING birthyearteacher::smallint ;"
 # psql -U postgres -d uni -c "ALTER TABLE teachers ALTER COLUMN gender TYPE char(1) USING gender::char(1) ;"
+#
