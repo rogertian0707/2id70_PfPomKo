@@ -1,4 +1,3 @@
-#!/bin/bash
 psql -U postgres -c "CREATE DATABASE uni;"
 # create table
 psql -U postgres -d uni -c "CREATE UNLOGGED TABLE Degrees(DegreeId INT PRIMARY KEY,Dept VARCHAR,DegreeDescription VARCHAR,TotalECTS INT);"
@@ -35,39 +34,3 @@ psql -U postgres -d uni -c "ALTER TABLE courseregistrations_4 ADD PRIMARY KEY (s
 psql -U postgres -d uni -c "ALTER TABLE courseregistrations_null ADD PRIMARY KEY (studentregistrationid,courseofferid);"
 psql -U postgres -d uni -c "ALTER TABLE courseregistrations_failed ADD PRIMARY KEY (studentregistrationid,courseofferid);"
 psql -U postgres -d uni -c "ALTER TABLE courseregistrations_passed ADD PRIMARY KEY (studentregistrationid,courseofferid);"
-#
-#OPTIMIZATION
-# DO NOT SET FK, slow down performance
-#
-# psql -U postgres -d uni -c "ALTER TABLE CourseRegistrations_0 ADD PRIMARY KEY (CourseOfferId);"
-# psql -U postgres -d uni -c "ALTER TABLE CourseRegistrations_garbage ADD PRIMARY KEY (CourseOfferId);"
-# psql -U postgres -d uni -c "ALTER TABLE CourseRegistrations_4 ADD PRIMARY KEY (CourseOfferId);"
-# psql -U postgres -d uni -c "ALTER TABLE CourseRegistrations_5 ADD PRIMARY KEY (CourseOfferId);"
-# psql -U postgres -d uni -c "ALTER TABLE CourseRegistrations_6 ADD PRIMARY KEY (CourseOfferId);"
-# psql -U postgres -d uni -c "ALTER TABLE CourseRegistrations_7 ADD PRIMARY KEY (CourseOfferId);"
-# psql -U postgres -d uni -c "ALTER TABLE CourseRegistrations_8 ADD PRIMARY KEY (CourseOfferId);"
-# psql -U postgres -d uni -c "ALTER TABLE CourseRegistrations_9 ADD PRIMARY KEY (CourseOfferId);"
-# psql -U postgres -d uni -c "ALTER TABLE CourseRegistrations_10 ADD PRIMARY KEY (CourseOfferId);"
-# #
-#DATA TYPE OPTIMIZATION (BY DAVID)
-# psql -U postgres -d uni -c "ALTER TABLE courseoffers ALTER COLUMN year TYPE smallint USING year::smallint ;"
-# psql -U postgres -d uni -c "ALTER TABLE courseoffers ALTER COLUMN quartile TYPE smallint USING quartile::smallint ;"
-# psql -U postgres -d uni -c "ALTER TABLE courseregistrations ALTER COLUMN grade TYPE smallint USING grade::smallint ;"
-# psql -U postgres -d uni -c "ALTER TABLE courses ALTER COLUMN degreeid TYPE smallint USING degreeid::smallint ;"
-# psql -U postgres -d uni -c "ALTER TABLE courses ALTER COLUMN ects TYPE smallint USING ects::smallint ;"
-# psql -U postgres -d uni -c "ALTER TABLE courses ALTER COLUMN coursename TYPE varchar(50) USING coursename::varchar(50) ;"
-# psql -U postgres -d uni -c "ALTER TABLE courses ALTER COLUMN coursedescription TYPE varchar(200) USING coursedescription::varchar(200) ;"
-# psql -U postgres -d uni -c "ALTER TABLE degrees ALTER COLUMN degreeid TYPE smallint USING degreeid::smallint ;"
-# psql -U postgres -d uni -c "ALTER TABLE degrees ALTER COLUMN dept TYPE varchar(50) USING dept::varchar(50) ;"
-# psql -U postgres -d uni -c "ALTER TABLE degrees ALTER COLUMN degreedescription TYPE varchar(200) USING degreedescription::varchar(200) ;"
-# psql -U postgres -d uni -c "ALTER TABLE degrees ALTER COLUMN totalects TYPE smallint USING totalects::smallint ;"
-# psql -U postgres -d uni -c "ALTER TABLE studentregistrationstodegrees ALTER COLUMN degreeid TYPE smallint USING degreeid::smallint ;"
-# psql -U postgres -d uni -c "ALTER TABLE studentregistrationstodegrees ALTER COLUMN registrationyear TYPE smallint USING registrationyear::smallint ;"
-# psql -U postgres -d uni -c "ALTER TABLE students ALTER COLUMN studentname TYPE varchar(50) USING studentname::varchar(50) ;"
-# psql -U postgres -d uni -c "ALTER TABLE students ALTER COLUMN address TYPE varchar(200) USING address::varchar(200) ;"
-# psql -U postgres -d uni -c "ALTER TABLE students ALTER COLUMN birthyearstudent TYPE smallint USING birthyearstudent::smallint ;"
-# psql -U postgres -d uni -c "ALTER TABLE students ALTER COLUMN gender TYPE char(1) USING gender::char(1) ;"
-# psql -U postgres -d uni -c "ALTER TABLE teachers ALTER COLUMN teachername TYPE varchar(50) USING teachername::varchar(50) ;"
-# psql -U postgres -d uni -c "ALTER TABLE teachers ALTER COLUMN address TYPE varchar(200) USING address::varchar(200) ;"
-# psql -U postgres -d uni -c "ALTER TABLE teachers ALTER COLUMN birthyearteacher TYPE smallint USING birthyearteacher::smallint ;"
-# psql -U postgres -d uni -c "ALTER TABLE teachers ALTER COLUMN gender TYPE char(1) USING gender::char(1) ;"
