@@ -1,11 +1,5 @@
 #!/bin/bash
-#
-# create db
-# createdb uni
-START=$(date +%s)
 psql -U postgres -c "CREATE DATABASE uni;"
-#
-#
 # create table
 psql -U postgres -d uni -c "CREATE UNLOGGED TABLE Degrees(DegreeId INT PRIMARY KEY,Dept VARCHAR,DegreeDescription VARCHAR,TotalECTS INT);"
 psql -U postgres -d uni -c "CREATE UNLOGGED TABLE Students(StudentId INT PRIMARY KEY,StudentName VARCHAR,Address VARCHAR,BirthyearStudent INT,Gender VARCHAR);"
@@ -77,7 +71,3 @@ psql -U postgres -d uni -c "ALTER TABLE courseregistrations_passed ADD PRIMARY K
 # psql -U postgres -d uni -c "ALTER TABLE teachers ALTER COLUMN address TYPE varchar(200) USING address::varchar(200) ;"
 # psql -U postgres -d uni -c "ALTER TABLE teachers ALTER COLUMN birthyearteacher TYPE smallint USING birthyearteacher::smallint ;"
 # psql -U postgres -d uni -c "ALTER TABLE teachers ALTER COLUMN gender TYPE char(1) USING gender::char(1) ;"
-#
-END=$(date +%s)
-DIFF=$(echo "$END - $START" | bc)
-echo "It takes DIFF=$DIFF seconds to complete this task..."
