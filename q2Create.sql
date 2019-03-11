@@ -74,7 +74,7 @@ CREATE MATERIALIZED VIEW GPA AS
 SELECT
 	sr_to_deg.studentregistrationid as srid,
 	(SUM(cr_passed.grade*courses.ects)/SUM(courses.ects)) AS GPA_score,
-	(CASE WHEN SUM(courses.ects)<degrees.totalects THEN 1 ELSE 0 END) AS degree_complete_or_not
+	CAST ((CASE WHEN SUM(courses.ects)<degrees.totalects THEN 1 ELSE 0 END) AS FLOAT) AS degree_complete_or_not
 FROM
 	studentregistrationstodegrees AS sr_to_deg,
 	courseregistrations_passed AS cr_passed,
