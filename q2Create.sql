@@ -20,10 +20,11 @@ GROUP BY CourseOfferID;
 
 CREATE VIEW max_grade_for_coid(coid,max_grade) AS
 SELECT cr.CourseOfferId, max(cr.grade)
-FROM CourseOffers AS co, CourseRegistrations_passed AS cr
+FROM CourseOffers AS co, CourseRegistrations AS cr
 WHERE cr.CourseOfferId = co.CourseOfferId
  	AND co.Year = 2018 AND co.Quartile = 1
 GROUP BY cr.CourseOfferId;
+
 
 CREATE OR REPLACE VIEW failed_UNION_4 AS
 SELECT studentregistrationid FROM courseregistrations_4 UNION ALL SELECT studentregistrationid FROM courseregistrations_failed
@@ -57,7 +58,7 @@ WHERE	s.studentid = srtd.studentid AND
 --MATERIALIZED VIEW
 CREATE MATERIALIZED VIEW good_student(sid,good_grades) AS
 SELECT srtg.StudentId AS sid , cr.grade AS good_grades
-FROM max_grade_for_coid, CourseRegistrations_passed AS cr, StudentRegistrationsToDegrees AS srtg
+FROM max_grade_for_coid, CourseRegistrations AS cr, StudentRegistrationsToDegrees AS srtg
 WHERE srtg.StudentRegistrationId = cr.StudentRegistrationId
 	AND max_grade_for_coid.coid  = cr.CourseOfferId
 	AND max_grade_for_coid.max_grade = cr.Grade
