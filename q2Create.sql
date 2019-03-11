@@ -55,6 +55,11 @@ WHERE	s.studentid = srtd.studentid AND
 	srtd.studentregistrationid = noCourses.studentregistrationid
 ;
 
+CREATE VIEW courses_with_too_few_assistants(courseofferId) AS
+SELECT s.courseofferid
+FROM students_per_courseOffer as S, assistants_per_courseOffer as A
+WHERE s.courseofferid = a.courseofferid AND s.students/a.assistants>50;
+
 --MATERIALIZED VIEW
 CREATE MATERIALIZED VIEW good_student(sid,good_grades) AS
 SELECT srtg.StudentId AS sid , cr.grade AS good_grades
