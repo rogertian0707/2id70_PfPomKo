@@ -9,7 +9,7 @@ UNION ALL
 SELECT * FROM courseregistrations_passed;
 
 CREATE VIEW students_per_courseOffer(students,courseOfferID) AS 
-SELECT C.CourseOfferId, COUNT(C.Studentregistrationid)
+SELECT  COUNT(C.Studentregistrationid), C.CourseOfferId
 FROM CourseRegistrations as C
 GROUP BY C.CourseOfferId;
 
