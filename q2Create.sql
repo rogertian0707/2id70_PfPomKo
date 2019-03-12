@@ -1,18 +1,3 @@
-
-CREATE MATERIALIZED VIEW GPA2 AS
-SELECT
-	sr_to_deg.studentregistrationid as srid,
-	(SUM(cr_passed.grade*courses.ects)/SUM(courses.ects)) AS GPA_score
-FROM
-	studentregistrationstodegrees AS sr_to_deg,
-	courseregistrations_passed AS cr_passed,
-	courseoffers AS co,
-	courses
-WHERE
-	courses.courseid = co.courseid
-	AND co.courseofferid = cr_passed.courseofferid
-	AND sr_to_deg.studentregistrationid = cr_passed.studentregistrationid
-GROUP BY sr_to_deg.studentregistrationid
 ;--NORMAL VIEWS
 CREATE VIEW CourseRegistrations AS 
 SELECT * FROM courseregistrations_NULL
