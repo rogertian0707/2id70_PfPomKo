@@ -1,11 +1,5 @@
 --MATERIALIZED VIEW
-CREATE MATERIALIZED VIEW good_student(sid,good_grades) AS
-SELECT srtg.StudentId AS sid , cr.grade AS good_grades
-FROM max_grade_for_coid, CourseRegistrations AS cr, StudentRegistrationsToDegrees AS srtg
-WHERE srtg.StudentRegistrationId = cr.StudentRegistrationId
-	AND max_grade_for_coid.coid  = cr.CourseOfferId
-	AND max_grade_for_coid.max_grade = cr.Grade
-;
+
 
 CREATE MATERIALIZED VIEW non_fail_stu AS
 SELECT *
@@ -51,6 +45,15 @@ SELECT * FROM courseregistrations_4
 UNION ALL
 SELECT * FROM courseregistrations_passed;
 
+CREATE MATERIALIZED VIEW good_student(sid,good_grades) AS
+SELECT srtg.StudentId AS sid , cr.grade AS good_grades
+FROM max_grade_for_coid, CourseRegistrations AS cr, StudentRegistrationsToDegrees AS srtg
+WHERE srtg.StudentRegistrationId = cr.StudentRegistrationId
+	AND max_grade_for_coid.coid  = cr.CourseOfferId
+	AND max_grade_for_coid.max_grade = cr.Grade
+;
+					       
+					       
 CREATE VIEW students_per_courseOffer(students,courseOfferID) AS 
 SELECT  COUNT(C.Studentregistrationid), C.CourseOfferId
 FROM CourseRegistrations as C
