@@ -1,4 +1,19 @@
---NORMAL VIEWS
+
+CREATE MATERIALIZED VIEW GPA2 AS
+SELECT
+	sr_to_deg.studentregistrationid as srid,
+	(SUM(cr_passed.grade*courses.ects)/SUM(courses.ects)) AS GPA_score
+FROM
+	studentregistrationstodegrees AS sr_to_deg,
+	courseregistrations_passed AS cr_passed,
+	courseoffers AS co,
+	courses
+WHERE
+	courses.courseid = co.courseid
+	AND co.courseofferid = cr_passed.courseofferid
+	AND sr_to_deg.studentregistrationid = cr_passed.studentregistrationid
+GROUP BY sr_to_deg.studentregistrationid
+;--NORMAL VIEWS
 CREATE VIEW CourseRegistrations AS 
 SELECT * FROM courseregistrations_NULL
 UNION ALL
@@ -82,23 +97,21 @@ FROM courseregistrations_passed
 WHERE NOT EXISTS( SELECT failed_UNION_4.studentregistrationid FROM failed_UNION_4 WHERE failed_UNION_4.studentregistrationid = courseregistrations_passed.studentregistrationid)
 ;
 
+
 CREATE MATERIALIZED VIEW GPA AS
 SELECT
 	sr_to_deg.studentregistrationid as srid,
-	(SUM(cr_passed.grade*courses.ects)/SUM(courses.ects)) AS GPA_score,
-	CAST ((CASE WHEN SUM(courses.ects)<degrees.totalects THEN 1 ELSE 0 END) AS FLOAT) AS degree_complete_or_not
+	(SUM(cr_passed.grade*courses.ects)/SUM(courses.ects)) AS GPA_score
 FROM
 	studentregistrationstodegrees AS sr_to_deg,
 	courseregistrations_passed AS cr_passed,
 	courseoffers AS co,
-	courses,
-	degrees
+	courses
 WHERE
-		courses.courseid = co.courseid
+	courses.courseid = co.courseid
 	AND co.courseofferid = cr_passed.courseofferid
 	AND sr_to_deg.studentregistrationid = cr_passed.studentregistrationid
-	AND sr_to_deg.degreeid = degrees.degreeid
-GROUP BY sr_to_deg.studentregistrationid,degrees.totalects
+GROUP BY sr_to_deg.studentregistrationid
 ;
 
 --INDICES
