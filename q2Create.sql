@@ -30,17 +30,6 @@ WHERE
 GROUP BY sr_to_deg.studentregistrationid
 ;
 
-CREATE MATERIALIZED VIEW inactive AS
-SELECT studentregistrationstodegrees.studentregistrationid
-FROM studentregistrationstodegrees, courses, degrees, courseoffers, courseregistrations_passed
-WHERE studentregistrationstodegrees.degreeid = degrees.degreeid
-AND courseregistrations_passed.courseofferid = courseoffers.courseofferid
-AND courseregistrations_passed.studentregistrationid = studentregistrationstodegrees.studentregistrationid
-AND courseoffers.courseid = courses.courseid
-GROUP BY studentregistrationstodegrees.studentregistrationid, degrees.totalects
-HAVING sum(courses.ects) >= degrees.totalects
-;
-
 
 --NORMAL VIEWS
 CREATE VIEW CourseRegistrations AS 
@@ -100,4 +89,3 @@ WHERE s.courseofferid = a.courseofferid AND s.students/a.assistants>50;
 CREATE INDEX idx_student_degree ON studentregistrationstodegrees(studentid);
 
 CREATE INDEX idx_course_id ON courseoffers(courseid);
-
