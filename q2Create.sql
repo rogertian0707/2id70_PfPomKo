@@ -1,72 +1,3 @@
-;--NORMAL VIEWS
-CREATE VIEW CourseRegistrations AS 
-SELECT * FROM courseregistrations_NULL
-UNION ALL
-SELECT * FROM courseregistrations_failed
-UNION ALL
-SELECT * FROM courseregistrations_4
-UNION ALL
-SELECT * FROM courseregistrations_passed;
-
-CREATE VIEW students_per_courseOffer(students,courseOfferID) AS 
-SELECT  COUNT(C.Studentregistrationid), C.CourseOfferId
-FROM CourseRegistrations as C
-GROUP BY C.CourseOfferId;
-
-CREATE VIEW assistants_per_courseOffer(assistants, courseOfferID) AS 
-SELECT COUNT(studentregistrationid), CourseOfferID
-FROM Studentassistants
-GROUP BY CourseOfferID;
-
-CREATE VIEW courses_with_no_assistants(courseofferID) AS
-SELECT DISTINCT courseofferid
-FROM CourseOffers
-EXCEPT
-SELECT DISTINCT courseofferid
-FROM studentassistants;
-
-CREATE VIEW max_grade_for_coid(coid,max_grade) AS
-SELECT cr.CourseOfferId, max(cr.grade)
-FROM CourseOffers AS co, CourseRegistrations AS cr
-WHERE cr.CourseOfferId = co.CourseOfferId
- 	AND co.Year = 2018 AND co.Quartile = 1
-GROUP BY cr.CourseOfferId;
-
-
-CREATE OR REPLACE VIEW failed_UNION_4 AS
-SELECT studentregistrationid FROM courseregistrations_4 UNION ALL SELECT studentregistrationid FROM courseregistrations_failed
-;
-
-CREATE VIEW active AS
-SELECT s.studentid, studentname, address, birthyearstudent, gender
-FROM    (SELECT cr.studentregistrationID, SUM(c.ects)
-	FROM courseregistrations_passed as cr, courses as c, courseoffers as co
-	WHERE cr.courseofferid = co.courseofferid AND co.courseid = c.courseid
-	GROUP BY cr.studentregistrationID) as currentECTS(studentregistrationID, ECTS), 
-	(SELECT studentID, srtd.studentregistrationID, totalects
-	FROM degrees as d, studentregistrationstodegrees as srtd
-	WHERE d.degreeid = srtd.degreeid) as neededECTS(studentID,studentregistrationID, ECTS),
-	students as s
-WHERE	currentECTS.studentregistrationID = neededECTS.studentregistrationID AND
-	currentECTS.ECTS < neededECTS.ECTS AND
-	neededECTS.studentid = s.studentid
-UNION ALL
-SELECT 	s.studentid, studentname, address, birthyearstudent, gender
-FROM 	(SELECT studentregistrationid
-	FROM studentregistrationstodegrees
-	EXCEPT
-	SELECT DISTINCT studentregistrationid
-	FROM Courseregistrations) as noCourses,
-	students as s, studentregistrationstodegrees as srtd
-WHERE	s.studentid = srtd.studentid AND
-	srtd.studentregistrationid = noCourses.studentregistrationid
-;
-
-CREATE VIEW courses_with_too_few_assistants(courseofferId) AS
-SELECT s.courseofferid
-FROM students_per_courseOffer as S, assistants_per_courseOffer as A
-WHERE s.courseofferid = a.courseofferid AND s.students/a.assistants>50;
-
 --MATERIALIZED VIEW
 CREATE MATERIALIZED VIEW good_student(sid,good_grades) AS
 SELECT srtg.StudentId AS sid , cr.grade AS good_grades
@@ -109,6 +40,61 @@ AND courseoffers.courseid = courses.courseid
 GROUP BY studentregistrationstodegrees.studentregistrationid, degrees.totalects
 HAVING sum(courses.ects) >= degrees.totalects
 ;
+
+
+--NORMAL VIEWS
+CREATE VIEW CourseRegistrations AS 
+SELECT * FROM courseregistrations_NULL
+UNION ALL
+SELECT * FROM courseregistrations_failed
+UNION ALL
+SELECT * FROM courseregistrations_4
+UNION ALL
+SELECT * FROM courseregistrations_passed;
+
+CREATE VIEW students_per_courseOffer(students,courseOfferID) AS 
+SELECT  COUNT(C.Studentregistrationid), C.CourseOfferId
+FROM CourseRegistrations as C
+GROUP BY C.CourseOfferId;
+
+CREATE VIEW assistants_per_courseOffer(assistants, courseOfferID) AS 
+SELECT COUNT(studentregistrationid), CourseOfferID
+FROM Studentassistants
+GROUP BY CourseOfferID;
+
+CREATE VIEW courses_with_no_assistants(courseofferID) AS
+SELECT DISTINCT courseofferid
+FROM CourseOffers
+EXCEPT
+SELECT DISTINCT courseofferid
+FROM studentassistants;
+
+CREATE VIEW max_grade_for_coid(coid,max_grade) AS
+SELECT cr.CourseOfferId, max(cr.grade)
+FROM CourseOffers AS co, CourseRegistrations AS cr
+WHERE cr.CourseOfferId = co.CourseOfferId
+ 	AND co.Year = 2018 AND co.Quartile = 1
+GROUP BY cr.CourseOfferId;
+
+
+CREATE OR REPLACE VIEW failed_UNION_4 AS
+SELECT studentregistrationid FROM courseregistrations_4 UNION ALL SELECT studentregistrationid FROM courseregistrations_failed
+;
+
+CREATE VIEW active AS
+(SELECT studentregistrationid
+FROM studentregistrationstodegrees)
+EXCEPT
+(SELECT studentregistrationstodegrees.studentregistrationid
+FROM studentregistrationstodegrees, inactive
+WHERE studentregistrationstodegrees.studentregistrationid = inactive.studentregistrationid)
+;
+
+CREATE VIEW courses_with_too_few_assistants(courseofferId) AS
+SELECT s.courseofferid
+FROM students_per_courseOffer as S, assistants_per_courseOffer as A
+WHERE s.courseofferid = a.courseofferid AND s.students/a.assistants>50;
+
 
 --INDICES
 CREATE INDEX idx_student_degree ON studentregistrationstodegrees(studentid);
