@@ -114,6 +114,17 @@ WHERE
 GROUP BY sr_to_deg.studentregistrationid
 ;
 
+CREATE MATERIALIZED VIEW inactive AS
+SELECT studentregistrationstodegrees.studentid
+FROM studentregistrationstodegrees, courses, degrees, courseoffers, courseregistrations_passed
+WHERE studentregistrationstodegrees.degreeid = degrees.degreeid
+AND courseregistrations_passed.courseofferid = courseoffers.courseofferid
+AND courseregistrations_passed.studentregistrationid = studentregistrationstodegrees.studentregistrationid
+AND courseoffers.courseid = courses.courseid
+GROUP BY studentregistrationstodegrees.studentid, degrees.totalects
+HAVING sum(courses.ects) >= degrees.totalects
+;
+
 --INDICES
 CREATE INDEX idx_student_degree ON studentregistrationstodegrees(studentid);
 
