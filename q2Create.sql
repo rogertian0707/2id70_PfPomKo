@@ -9,7 +9,7 @@ UNION ALL
 SELECT * FROM courseregistrations_passed;
 
 CREATE VIEW students_per_courseOffer(students,courseOfferID) AS 
-SELECT C.CourseOfferId, CASE WHEN COUNT(C.Studentregistrationid) < 50 then 50 else COUNT(C.Studentregistrationid) end
+SELECT C.CourseOfferId, COUNT(C.Studentregistrationid)
 FROM CourseRegistrations as C
 GROUP BY C.CourseOfferId;
 
@@ -17,6 +17,13 @@ CREATE VIEW assistants_per_courseOffer(assistants, courseOfferID) AS
 SELECT COUNT(studentregistrationid), CourseOfferID
 FROM Studentassistants
 GROUP BY CourseOfferID;
+
+CREATE VIEW courses_with_no_assistants(courseofferID) AS
+SELECT DISTINCT courseofferid
+FROM CourseOffers
+EXCEPT
+SELECT DISTINCT courseofferid
+FROM studentassistants;
 
 CREATE VIEW max_grade_for_coid(coid,max_grade) AS
 SELECT cr.CourseOfferId, max(cr.grade)
